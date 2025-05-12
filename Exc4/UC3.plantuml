@@ -1,0 +1,17 @@
+@startuml UC3
+
+hide footbox
+
+title UC3 - Получить итоговую ставку по депозитам
+
+control "Таймер" as timer
+participant "Микросервис для выгрузки ставок\nна SFTP для внешнего call-центра" as ms
+queue "Kafka" as kafka
+participant "SFTP" as sftp
+
+timer -> ms : Запуск события по получению\nитоговой ставки по депозитам по расписанию
+ms ->> kafka : Получить сообщение\nc итоговыми ставками по депозитам
+ms -> ms : Обработать сообщение и сформировать файл для SFTP
+ms ->> sftp : Отправить файл на SFTP
+
+@enduml

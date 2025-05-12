@@ -1,0 +1,19 @@
+@startuml UC2
+
+hide footbox
+
+title UC2 - Просмотреть итоговую ставку по депозитам
+
+control "Таймер" as timer
+actor "Менеджер call-центра" as call
+participant "Система call-центра" as system
+queue "Kafka" as kafka
+
+
+timer -> system : Запуск события по получению\nитоговой ставки по депозитам по расписанию
+system ->> kafka : Получить сообщение\nc итоговыми ставками по депозитам
+system -> system : Сохранить ставки
+call -> system : Просмотреть итоговые ставки
+system --> call : Итоговые ставки
+
+@enduml

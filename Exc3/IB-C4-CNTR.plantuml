@@ -1,0 +1,36 @@
+@startuml c4-ib-container
+
+title "C4 Контейнерная диаграмма Интернет-банка"
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_TOP_DOWN()
+LAYOUT_WITH_LEGEND()
+
+System_Boundary(ib, "Интернет-банк", "Интернет-банк") {
+    Container(ib_front, "Интернет-банк front-end", "Существующий фронт Интернет-банка", "ASP.NET MVC 4.5")
+    Container(ib_back, "Интернет-банк back-end", "Существующий бэк Интернет-банка", "ASP.NET MVC 4.5")
+    Container(ms_depostit, "Микросервис заявок на депозит", "Микросервис заявок на депозит", "Java Spring Boot")
+    ContainerDb(db, "База данных", "", "Microsoft SQL Server")
+}
+
+System(site, "Сайт")
+System(kafka, "Система очередей Kafka")
+
+Lay_R(ib_back, ms_depostit)
+
+Lay_D(site, ib)
+'Lay_U(kafka, ib)
+
+Rel_D(ib_front, ib_back, "")
+Rel_D(ib_back, db, "")  
+
+Rel_D(site, ms_depostit, "Отправляет заявку на депозит", "HTTPS")
+Rel_D(ms_depostit, db, "Сохраняет и обновляет заявки на депозит", "JDBC")
+
+Rel_D(ms_depostit, kafka, "Отправляет сообщение об оформлении заявки на депозит", "Kafka")
+Rel_D(ms_depostit, kafka, "Получает сообщение об изменении процента ставки", "Kafka")
+Rel_D(ms_depostit, kafka, "Получает сообщение об изменении статуса заявки", "Kafka")
+
+@enduml
