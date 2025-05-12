@@ -1,0 +1,40 @@
+@startuml c4-abs-container
+
+
+title "C4 Контейнерная диаграмма Автоматизированной банковской системы"
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Person(Back, "Менеджер бэк-офиса", "Менеджер бэк-офиса, подтверждающий заявку на депозит")
+
+LAYOUT_TOP_DOWN()
+LAYOUT_WITH_LEGEND()
+
+System_Boundary(abd, "Автоматизированная банковская система") {
+    Container(client, "Клиентское приложение", "", "Delphi")
+    ContainerDb(server, "Сервер", "", "Oracle + PL/SQL")
+    Container(ms, "Микросервис заявок на депозит", "Микросервис заявок на депозит", "Java Spring Boot")
+}
+
+System(kafka, "Система очередей Kafka")
+System(sms, "СМС-шлюз телеком-оператора")
+
+System_Ext(telco, "Телеком-оператор")  
+
+
+Rel_D(Back, client, "")
+Rel_D(client, server, "", "ODBC")
+Rel_U(sms, server, "", "ODBC")
+
+Lay_R(server, ms)
+Rel_R(ms, server, "Создание / обновление заявок на депозит", "JDBC")
+Rel_D(ms, kafka, "Получает сообщение об изменении процента ставки", "Kafka")
+Rel_D(ms, kafka, "Отправляет сообщение об изменении статуса заявки", "Kafka")
+
+Rel_D(sms, telco, "Отправляет запрос на SMS-уведомление о подтверждении заявки", "SMPP")
+
+
+
+
+@enduml

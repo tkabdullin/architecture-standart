@@ -1,0 +1,33 @@
+@startuml c4-container
+
+
+title "C4 Контейнерная диаграмма"
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Person(Back, "Сотрудник отдела кредитования", "Сотрудник отдела кредитования подтверждающий корректность расчёта ставок")
+
+LAYOUT_TOP_DOWN()
+LAYOUT_WITH_LEGEND()
+
+System_Boundary(abd, "Автоматизированная банковская система") {
+    Container(client, "Клиентское приложение", "", "Delphi")
+    ContainerDb(server, "Сервер", "", "Oracle + PL/SQL")
+    Container(ms, "Микросервис расчета ставок", "", "Java Spring Boot")
+}
+
+System(kafka, "Система очередей Kafka")
+
+
+
+Rel_D(Back, client, "Просмотр и подтверждение ставок")
+Rel_D(client, server, "", "ODBC")
+
+Lay_R(server, ms)
+Rel_R(ms, server, "Расчёт ставок", "JDBC")
+Rel_L(server, ms, "Опубликовать ставки", "HTTPS/REST")
+Rel_D(ms, kafka, "Публикация расчитанных ставок", "Kafka")
+
+
+@enduml

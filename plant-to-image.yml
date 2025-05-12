@@ -1,0 +1,25 @@
+name: generate plantuml
+on: 
+  push:
+    branches:
+      - sprint-9
+
+jobs:
+  generate_plantuml:
+    runs-on: ubuntu-latest
+    name: plantuml
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+        persist-credentials: true
+
+    - name: generate diagrams
+      uses: grassedge/generate-plantuml-action@v1.5
+      with:
+        path: diagrams
+        message: "Render PlantUML files"
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

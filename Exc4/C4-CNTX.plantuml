@@ -1,0 +1,37 @@
+@startuml c4-context
+
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+LAYOUT_TOP_DOWN()
+
+Person(Back, "Сотрудник отдела кредитования", "Сотрудник отдела кредитования подтверждающий корректность расчёта ставок")
+Person(Manager, "Менеджер call-центра", "Менеджер call-центра, обрабатывающий заявку на депозит")   
+
+System_Boundary(std, "Банк Стандарт", "Информационные системы банка Стандарт") {
+
+    System(call, "Система call-центра")
+    System(abs, "Автоматизированная банковская система (АБС)")
+    System(kafka, "Система очередей Kafka")
+
+    System(ms, "Микросервис для выгрузки ставок\nна SFTP для внешнего call-центра")
+    System(sftp, "SFTP-сервер")
+
+}
+
+System_Ext(call_ext, "Call-центр партнёра")
+
+
+Rel_D(Back, abs, "Подтверждает рассчитанные ставки")
+Rel_D(abs, kafka, "Публикует рассчитанные ставки")   
+Rel_R(call, kafka, "Обрабатывает полученные рассчитанные ставки")
+
+Lay_R(Manager, call)
+Rel(Manager, call, "Просматривает рассчитанные ставки")
+
+Rel_U(ms, kafka, "Обрабатывает полученные рассчитанные ставки")
+Rel_D(ms, sftp, "Выгружает файл со ставками на SFTP")
+
+Rel_U(call_ext, sftp, "Получает файл со ставками")
+
+@enduml

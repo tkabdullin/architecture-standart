@@ -1,0 +1,10 @@
+@startuml
+
+left to right direction
+
+:Back-office manager: --> (UC 3 - Подтвердить заявку на депозит)
+:Call-center manager: -->  (UC 2 - Обработать заявку на депозит)
+:Web-site user: --> (UC 1 - Оформить заявку на депозит)
+:Internet-banking user: -> :Web-site user:
+
+@enduml

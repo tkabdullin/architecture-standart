@@ -1,0 +1,35 @@
+@startuml UC1
+
+hide footbox
+
+title UC1 - Сформировать итоговую ставку по депозитам
+
+control "Таймер" as timer
+actor "Сотрудник отдела кредитования" as credit
+box АБС
+participant "Микросервис расчета ставок" as calc
+participant "Клиент АБС" as client
+database "Oracle" as db
+end box
+queue "Kafka" as kafka
+
+timer -> calc : Запуск события по расчету ставок по депозитам по расписанию
+calc -> db : Запрос данных
+db --> calc : Данные
+calc -> calc : Расчет ставок
+calc -> db : Сохранение рассчитанных ставок
+credit -> client : Просмотр рассчитанных ставок
+client -> db : Запрос данных
+db --> client : Данные
+opt
+    credit -> client : Корректировка данных
+    client -> db : Корректировка
+    db --> client
+end
+credit -> client : Подтвердить рассчитанные ставки
+client -> db
+db --> client
+db -> calc : Ставки рассчитаны. Опубликовать.
+calc ->> kafka : Опубликовать ставки
+
+@enduml

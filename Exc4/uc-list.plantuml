@@ -1,0 +1,9 @@
+@startuml
+
+left to right direction
+
+:External call-center managet: --> (UC 3 - Получить итоговую ставку по депозитам)
+:Call-center manager: --> (UC 2 - Просмотреть итоговую ставку по депозитам)
+:Loan dept emplopyee: --> (UC 1 - Сформировать итоговую ставку по депозитам)
+
+@enduml

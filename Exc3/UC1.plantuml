@@ -1,0 +1,26 @@
+@startuml UC1 
+
+title Оформить заявку на депозит
+
+hide footbox
+autonumber 1
+
+actor "Посетитель Сайта" as visitor
+
+participant "Сайт" as site
+participant "Интернет-банк\nback-end" as ib
+participant "Система очередей\nKafka" as kafka
+participant "Система call-центра" as call
+
+
+visitor -> site : Оформить заявку на депозит
+site -> ib : Отправить заявку на депозит
+ib -> ib : Сохранить заявку на депозит
+ib --> site : Подтверждение о приеме заявки
+site --> visitor : Подтверждение о приеме заявки
+ib ->> kafka : Отправить сообщение\nоб оформлении заявки\nна депозит
+
+call ->> kafka : Получить сообщение\nоб оформлении заявки\nна депозит
+note left: Триггер для старта UC2
+
+@enduml
