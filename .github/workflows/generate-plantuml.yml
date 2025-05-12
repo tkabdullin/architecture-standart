@@ -18,7 +18,7 @@ jobs:
     - name: generate diagrams
       uses: grassedge/generate-plantuml-action@v1.5
       with:
-        path: diagrams
+        path: .
         message: "Render PlantUML files"
 
     env:
